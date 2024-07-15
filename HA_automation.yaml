@@ -1,6 +1,6 @@
 alias: EcoFlow PS Power Adj
 description: >-
-  Автоматически каждые 3 сек коректирует размер потребления квартиры для
+  Автоматически каждые 3 сек корректирует размер потребления квартиры для
   PowerStream на основе данных из Tyua Automat (Local)
 trigger:
   - platform: time_pattern
