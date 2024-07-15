@@ -1,0 +1,23 @@
+alias: EcoFlow PS Power Adj
+description: >-
+  Автоматически каждые 3 сек коректирует размер потребления квартиры для
+  PowerStream на основе данных из Tyua Automat (Local)
+trigger:
+  - platform: time_pattern
+    seconds: /3
+condition:
+  - condition: sun
+    after: sunrise
+  - condition: time
+    before: "14:00:00"
+action:
+  - service: pyscript.set_ef_powerstream_custom_load_power
+    data:
+      SerialNumber: -- PS Serial Number --
+      TotalPower: >-
+        {% set total_power = (states('sensor.tyuaswichpower') | float +
+        states('sensor.powerstream_inverter_output_watts') | float - 2) %}   
+        {% set total_solar = (states('sensor.powerstream_solar_1_watts') | float +
+        states('sensor.powerstream_solar_2_watts') | float - 1) %}   {{
+        [total_power, total_solar] | min | round }}
+mode: single
