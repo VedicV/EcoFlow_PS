@@ -85,6 +85,10 @@ def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None):
 
     
     url = 'https://api.ecoflow.com/iot-open/sign/device/quota'
+
+    # New oficial EcoFlow API Endpoint
+    url2 = 'https://api-e.ecoflow.com/iot-open/sign/device/quota'
+    
     cmdCode = 'WN511_SET_PERMANENT_WATTS_PACK'
     TotalPowerOffSet = 0
 
