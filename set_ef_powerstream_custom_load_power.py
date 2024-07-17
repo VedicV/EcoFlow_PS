@@ -68,8 +68,32 @@ def post_api(url, key, secret, params=None):
   else: print(f"post_api: {response.text}")
 
 
+
 @service
-def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None):
+def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None,NotWorking=None,TheSame=None):
+    
+    # Replace with valid access/secret keys
+    key = '--KEY--'
+    secret = '--SECRET--'
+
+    url = 'https://api.ecoflow.com/iot-open/sign/device/quota'
+    # New oficial EcoFlow API Endpoint
+    url2 = 'https://api-e.ecoflow.com/iot-open/sign/device/quota'
+    
+    #check if old value is same as new one
+    if TheSame == "true":
+        return
+    
+    #Power supply priority settings(0: prioritize power supply; 1: prioritize power storage)
+    cmdCode = 'WN511_SET_SUPPLY_PRIORITY_PACK'
+    paramsSupply = {"supplyPriority": 1}
+    paramsStorage = {"supplyPriority": 0}
+
+    if NotWorking == "true":
+        payload = put_api(url2,key,secret,{"sn":SerialNumber,"cmdCode":cmdCode0,"params":paramsSupply})
+        time.sleep(1)  # 1 sec pause
+        payload = put_api(url2,key,secret,{"sn":SerialNumber,"cmdCode":cmdCode0,"params":paramsStorage})
+        return
 
     log.info(f"set_ef_powerstream_custom_load_power: got SerialNumber {SerialNumber} TotalPower {TotalPower}")
 
@@ -79,33 +103,8 @@ def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None):
         return  # Exit the function if SerialNumber is None
 
     
-    # Replace with valid access/secret keys
-    key = '--KEY--'
-    secret = ' --SECRET--'
-
-    
-    url = 'https://api.ecoflow.com/iot-open/sign/device/quota'
-
-    # New oficial EcoFlow API Endpoint
-    url2 = 'https://api-e.ecoflow.com/iot-open/sign/device/quota'
-    
     cmdCode = 'WN511_SET_PERMANENT_WATTS_PACK'
     TotalPowerOffSet = 0
-
-    # collect current permanentWatts
-    quotas = ["20_1.permanentWatts"]
-    params  = {"quotas":quotas}
-
-    payload = post_api(url,key,secret,{"sn":SerialNumber,"params":params})
-    if payload.status_code == 200:
-        try:
-            cur_permanentWatts = round(payload.json()['data']['20_1.permanentWatts'] / 10)
-        except KeyError as e:
-            log.info(f"Error accessing data in payload:", e)
-            return  # Exit the function or handle the error appropriately
-    else:
-        cur_permanentWatts = 0
-        return 4, "Integration was not able to collect the current permanentWatts from EcoFlow SP!"
 
     CalPermanentWatts = TotalPower - TotalPowerOffSet
 
@@ -121,7 +120,7 @@ def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None):
 
         params = {"permanentWatts":NewPermanentWatts}
 
-        payload = put_api(url,key,secret,{"sn":SerialNumber,"cmdCode":cmdCode,"params":params})
+        payload = put_api(url2,key,secret,{"sn":SerialNumber,"cmdCode":cmdCode,"params":params})
         return payload
 
     except Exception as e:
