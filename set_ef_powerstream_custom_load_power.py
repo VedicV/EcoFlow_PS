@@ -85,7 +85,7 @@ def set_ef_powerstream_custom_load_power(SerialNumber=None,TotalPower=None,NotWo
         return
     
     #Power supply priority settings(0: prioritize power supply; 1: prioritize power storage)
-    cmdCode = 'WN511_SET_SUPPLY_PRIORITY_PACK'
+    cmdCode0 = 'WN511_SET_SUPPLY_PRIORITY_PACK'
     paramsSupply = {"supplyPriority": 1}
     paramsStorage = {"supplyPriority": 0}
 
